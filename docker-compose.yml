@@ -1,0 +1,83 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kb-postgres
+    environment:
+      POSTGRES_DB: knowledge_base_dev
+      POSTGRES_USER: kb_user
+      POSTGRES_PASSWORD: kb_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - kb-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: kb-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - kb-network
+
+  # Elasticsearch with Chinese analyzer
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    container_name: kb-elasticsearch
+    environment:
+      - node.name=kb-es-node
+      - cluster.name=kb-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./elasticsearch/config:/usr/share/elasticsearch/config
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    networks:
+      - kb-network
+
+  # Kibana for Elasticsearch management
+  kibana:
+    image: kibana:8.11.0
+    container_name: kb-kibana
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - kb-network
+
+  # Knowledge Base Application
+  kb-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kb-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      DATABASE_URL: jdbc:postgresql://postgres:5432/knowledge_base_dev
+      DATABASE_USERNAME: kb_user
+      DATABASE_PASSWORD: kb_password
+      ELASTICSEARCH_HOST: elasticsearch
+      ELASTICSEARCH_PORT: 9200
