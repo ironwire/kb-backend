@@ -1,12 +1,14 @@
 server:
   port: 8080
-  servlet:
-    context-path: /api
+  # Comment out the context-path to test if that's causing issues
+  # servlet:
+  #   context-path: /api
 
 spring:
   application:
     name: knowledge-base-backend
-
+  elasticsearch:
+    uris: http://${elasticsearch.host}:${elasticsearch.port}
   profiles:
     active: dev
 
@@ -23,26 +25,42 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+    defer-datasource-initialization: true
+  
+  sql:
+    init:
+      mode: always
+      continue-on-error: true
 
-  data:
-    elasticsearch:
-      repositories:
-        enabled: true
+  main:
+    allow-bean-definition-overriding: true
 
   security:
-    user:
-      name: admin
-      password: admin123
-      roles: ADMIN
+    filter:
+      order: 5
+
+# Elasticsearch configuration
+elasticsearch:
+  enabled: true
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  username: ${ELASTICSEARCH_USERNAME:}
+  password: ${ELASTICSEARCH_PASSWORD:}
+  
+
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,metrics
+      base-path: /actuator
   endpoint:
     health:
       show-details: always
+  health:
+    defaults:
+      enabled: true
 
 app:
   file:
@@ -59,3 +77,5 @@ logging:
     com.knowledgebase: DEBUG
     org.elasticsearch: INFO
     org.springframework.data.elasticsearch: DEBUG
+    org.springframework.security: DEBUG
+    org.yiqixue.kbbackend: DEBUG

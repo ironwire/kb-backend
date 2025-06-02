@@ -1,8 +1,8 @@
 package org.yiqixue.kbbackend.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 
@@ -10,11 +10,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchResponseDto {
-    private List<DocumentDto> documents;
-    private long totalElements;
-    private int totalPages;
-    private int currentPage;
+    private List<DocumentDto> results;
+    private long totalHits;
+    private int page;
     private int size;
-    private long searchTime; // in milliseconds
-    private String searchQuery;
+    private long searchTimeMs;
 }

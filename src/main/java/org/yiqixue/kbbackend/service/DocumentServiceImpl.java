@@ -6,8 +6,7 @@ import org.yiqixue.kbbackend.entity.KnowledgeDocument;
 import org.yiqixue.kbbackend.entity.DocumentMetadata;
 import org.yiqixue.kbbackend.exception.DocumentNotFoundException;
 import org.yiqixue.kbbackend.exception.DocumentProcessingException;
-import org.yiqixue.kbbackend.repository.DocumentRepository;
-//import org.yiqixue.kbbackend.util.FileUtil;
+import org.yiqixue.kbbackend.repository.jpa.KnowledgeDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,9 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,7 +30,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class DocumentServiceImpl implements DocumentService {
 
-    private final DocumentRepository documentRepository;
+    private final KnowledgeDocumentRepository documentRepository;
     private final TikaService tikaService;
     private final ChineseNlpService chineseNlpService;
     private final SearchService searchService;
@@ -220,7 +217,14 @@ public class DocumentServiceImpl implements DocumentService {
         dto.setStatus(document.getStatus());
 
         if (document.getMetadata() != null) {
-            dto.setMetadata(document.getMetadata().getCustomMetadata());
+            // Create a map with the metadata fields
+            Map<String, String> metadataMap = new HashMap<>();
+            DocumentMetadata metadata = document.getMetadata();
+            metadataMap.put("language", metadata.getLanguage());
+            metadataMap.put("wordCount", String.valueOf(metadata.getWordCount()));
+            metadataMap.put("characterCount", String.valueOf(metadata.getCharacterCount()));
+            
+            dto.setMetadata(metadataMap);
         }
 
         return dto;

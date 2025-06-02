@@ -3,7 +3,7 @@ package org.yiqixue.kbbackend.service;
 import org.yiqixue.kbbackend.dto.DocumentDto;
 import org.yiqixue.kbbackend.dto.DocumentUploadDto;
 import org.yiqixue.kbbackend.entity.KnowledgeDocument;
-import org.yiqixue.kbbackend.repository.DocumentRepository;
+import org.yiqixue.kbbackend.repository.jpa.KnowledgeDocumentRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 class KnowledgeDocumentServiceTest {
 
     @Mock
-    private DocumentRepository documentRepository;
+    private KnowledgeDocumentRepository documentRepository;
 
     @Mock
     private TikaService tikaService;

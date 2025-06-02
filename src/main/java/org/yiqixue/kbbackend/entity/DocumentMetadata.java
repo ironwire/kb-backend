@@ -1,51 +1,31 @@
 package org.yiqixue.kbbackend.entity;
+
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Document;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "document_metadata")
+@Data
+@Document(indexName = "document_metadata")
 public class DocumentMetadata {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.springframework.data.annotation.Id
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "document_id")
+    @Field(type = FieldType.Object)
+    @org.springframework.data.annotation.Transient
     private KnowledgeDocument document;
 
-    @Column(name = "author")
-    private String author;
-
-    @Column(name = "creation_date")
-    private LocalDateTime creationDate;
-
-    @Column(name = "modification_date")
-    private LocalDateTime modificationDate;
-
-    @Column(name = "language")
     private String language;
-
-    @Column(name = "page_count")
-    private Integer pageCount;
-
-    @Column(name = "word_count")
     private Integer wordCount;
-
-    @Column(name = "character_count")
     private Integer characterCount;
-
-    @ElementCollection
-    @CollectionTable(name = "document_custom_metadata")
-    @MapKeyColumn(name = "metadata_key")
-    @Column(name = "metadata_value")
-    private Map<String, String> customMetadata;
+    
+    // Add any other metadata fields here
 }

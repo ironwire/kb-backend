@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/api/search")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"}, allowCredentials = "true")
 public class SearchController {
 
     private final SearchService searchService;

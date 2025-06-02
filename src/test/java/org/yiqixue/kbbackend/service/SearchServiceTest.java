@@ -1,24 +1,29 @@
 package org.yiqixue.kbbackend.service;
 
-import org.yiqixue.kbbackend.dto.SearchRequestDto;
-import org.yiqixue.kbbackend.dto.SearchResponseDto;
-import org.elasticsearch.client.RestHighLevelClient;
+import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.yiqixue.kbbackend.dto.SearchRequestDto;
+import org.yiqixue.kbbackend.repository.elasticsearch.KnowledgeDocumentElasticsearchRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SearchServiceTest {
 
     @Mock
-    private RestHighLevelClient elasticsearchClient;
+    private ElasticsearchClient elasticsearchClient;
+    
+    @Mock
+    private ElasticsearchOperations elasticsearchOperations;
+    
+    @Mock
+    private KnowledgeDocumentElasticsearchRepository elasticsearchRepository;
 
     @InjectMocks
     private SearchServiceImpl searchService;

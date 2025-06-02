@@ -1,5 +1,5 @@
 # docker-compose.yml
-version: '3.8'
+# Note: The 'version' attribute is obsolete in newer Docker Compose versions
 
 services:
   # PostgreSQL Database
@@ -31,7 +31,7 @@ services:
 
   # Elasticsearch with Chinese analyzer
   elasticsearch:
-    image: elasticsearch:8.11.0
+    image: elasticsearch:7.17.21
     container_name: kb-elasticsearch
     environment:
       - node.name=kb-es-node
@@ -54,10 +54,17 @@ services:
       - "9300:9300"
     networks:
       - kb-network
+    command: >
+      bash -c "
+        if [ ! -d /usr/share/elasticsearch/plugins/analysis-ik ]; then
+          /usr/share/elasticsearch/bin/elasticsearch-plugin install --batch https://get.infini.cloud/elasticsearch/analysis-ik/7.17.21
+        fi
+        /usr/share/elasticsearch/bin/elasticsearch
+      "
 
   # Kibana for Elasticsearch management
   kibana:
-    image: kibana:8.11.0
+    image: kibana:7.17.21
     container_name: kb-kibana
     environment:
       ELASTICSEARCH_HOSTS: http://elasticsearch:9200
@@ -81,3 +88,16 @@ services:
       DATABASE_PASSWORD: kb_password
       ELASTICSEARCH_HOST: elasticsearch
       ELASTICSEARCH_PORT: 9200
+    networks:
+      - kb-network
+
+# Define the network
+networks:
+  kb-network:
+    driver: bridge
+
+# Define volumes
+volumes:
+  postgres_data:
+  redis_data:
+  es_data:

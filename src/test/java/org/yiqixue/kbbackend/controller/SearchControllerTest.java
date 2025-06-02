@@ -44,9 +44,11 @@ class SearchControllerTest {
         searchRequest.setSize(10);
 
         searchResponse = new SearchResponseDto();
-        searchResponse.setDocuments(Collections.emptyList());
-        searchResponse.setTotalElements(0);
-        searchResponse.setSearchQuery("test query");
+        searchResponse.setResults(Collections.emptyList());
+        searchResponse.setTotalHits(0);
+        searchResponse.setPage(0);
+        searchResponse.setSize(10);
+        searchResponse.setSearchTimeMs(0);
     }
 
     @Test
@@ -61,7 +63,7 @@ class SearchControllerTest {
                         .content(objectMapper.writeValueAsString(searchRequest))
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.searchQuery").value("test query"));
+                .andExpect(jsonPath("$.totalHits").value(0));
     }
 
     @Test
@@ -76,6 +78,6 @@ class SearchControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.searchQuery").value("test query"));
+                .andExpect(jsonPath("$.totalHits").value(0));
     }
 }

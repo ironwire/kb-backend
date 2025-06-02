@@ -18,11 +18,14 @@ public class DocumentDto {
     private String contentType;
     private Long fileSize;
     private String extractedContent;
+    private String contentSnippet;
     private String summary;
     private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private LocalDateTime uploadDate;
     private String createdBy;
     private String status;
     private Map<String, String> metadata;
+    private String fileType;
 }
